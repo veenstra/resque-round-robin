@@ -11,10 +11,7 @@ For our situation, which is probably pretty rare in rails deployments,
 we have multiple customers who submit jobs to resque, and we need to
 keep the jobs of one customer from starving out other customers.
 
-Using resque-dynamic-queues in conjunction with this gem, we are able to
-support this requirement of fairness, where not more than one worker will
-process each customers job.
-
+resque-dynamic-queues is a pre-requisite.
 
 ## Installation
 

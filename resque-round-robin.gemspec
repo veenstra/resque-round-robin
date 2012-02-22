@@ -9,6 +9,10 @@ Gem::Specification.new do |gem|
   gem.homepage      = ""
 
   gem.add_dependency "resque"
+  gem.add_dependency "resque-dynamic-queues"
+
+  gem.add_development_dependency('rspec', '~> 2.5')
+  gem.add_development_dependency('rack-test', '~> 0.5.4')
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
