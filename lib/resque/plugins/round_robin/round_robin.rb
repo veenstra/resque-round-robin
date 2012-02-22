@@ -10,7 +10,11 @@ module Resque::Plugins
       @n ||= 0
       @n += 1
       rot_queues = queues
-      rot_queues.rotate(@n % rot_queues.size)
+      if rot_queues.size > 0
+        rot_queues.rotate(@n % rot_queues.size)
+      else
+        rot_queues
+      end
     end
 
     def reserve_with_round_robin
