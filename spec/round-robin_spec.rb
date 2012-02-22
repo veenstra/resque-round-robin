@@ -21,9 +21,8 @@ describe "RoundRobin" do
       Resque.size(:q1).should == 4
       Resque.size(:q2).should == 4
     end
-    
-    it 'skips a queue that is being processed by another worker' do
-    end
+
+    it 'skips a queue that is being processed by another worker'
   end
 
   it "should pass lint" do
