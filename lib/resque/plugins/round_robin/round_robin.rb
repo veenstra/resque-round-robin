@@ -9,20 +9,35 @@ module Resque::Plugins
     def rotated_queues
       @n ||= 0
       @n += 1
-      rot_queues = queues
+      rot_queues = queues # since we rely on the resque-dynamic-queues plugin, this is all the queues, expanded out
       if rot_queues.size > 0
-        rot_queues.rotate(@n % rot_queues.size)
+        @n = @n % rot_queues.size
+        rot_queues.rotate(@n)
       else
         rot_queues
       end
     end
 
+    def queue_depth queuename
+      busy_queues = Resque::Worker.working.map { |worker| worker.job["queue"] }.compact
+      # find the queuename, count it.
+      busy_queues.select {|q| q == queuename }.size
+    end
+
+    def should_work_on_queue? queuename
+      return true if @queues.include? '*'  # workers with QUEUES=* are special and are not subject to queue depth setting
+      max = 1 # by default, workers are limited to 1 per queue
+      max = ENV["RESQUE_QUEUE_DEPTH"].to_i if ENV["RESQUE_QUEUE_DEPTH"].present?
+      return true if max == 0 # 0 means no limiting
+      return true if queue_depth(queuename) < max
+      false
+    end
+
     def reserve_with_round_robin
       qs = rotated_queues
-      qs = filter_busy_queues qs
       qs.each do |queue|
         log! "Checking #{queue}"
-        if job = Resque::Job.reserve(queue)
+        if should_work_on_queue?(queue) && job = Resque::Job.reserve(queue)
           log! "Found job on #{queue}"
           return job
         end
