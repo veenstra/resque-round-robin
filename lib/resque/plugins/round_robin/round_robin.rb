@@ -30,7 +30,9 @@ module Resque::Plugins
       max = DEFAULT_QUEUE_DEPTH
       max = ENV["RESQUE_QUEUE_DEPTH"].to_i if ENV["RESQUE_QUEUE_DEPTH"].present?
       return true if max == 0 # 0 means no limiting
-      return true if queue_depth(queuename) < max
+      cur_depth = queue_depth(queuename)
+      log! "queue #{queuename} depth = #{cur_depth} max = #{max}"
+      return true if cur_depth < max
       false
     end
 
