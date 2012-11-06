@@ -1,4 +1,5 @@
 
+require 'backports'
 require 'resque'
 require 'resque/worker'
 require 'resque-dynamic-queues'
